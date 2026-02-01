@@ -5,7 +5,7 @@
 
     <groupId>org.springframework.samples</groupId>
     <artifactId>spring-petclinic-rest</artifactId>
-    <version>3.4.3</version>
+    <version>4.0.2</version>
 
     <description>REST version of the Spring Petclinic sample application</description>
     <url>https://spring-petclinic.github.io/</url>
@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.7</version>
+        <version>4.0.2</version>
         <relativePath/> <!-- lookup parent from Maven repository -->
     </parent>
 
@@ -21,7 +21,7 @@
 
         <!-- Third-party libraries -->
         <spring-data-jdbc.version>1.2.1.RELEASE</spring-data-jdbc.version>
-        <springdoc-openapi-ui.version>2.8.13</springdoc-openapi-ui.version>
+        <springdoc-openapi-ui.version>3.0.1</springdoc-openapi-ui.version>
         <jackson-databind-nullable.version>0.2.8</jackson-databind-nullable.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
@@ -59,7 +59,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
+            <artifactId>spring-boot-starter-aspectj</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -75,7 +75,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -127,8 +127,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -139,11 +139,11 @@
 
         <!-- JSON / XML / Serialization libs -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
@@ -162,10 +162,6 @@
             <version>${jackson-databind-nullable.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
@@ -176,9 +172,8 @@
             <version>${mapstruct.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>${jaxb-api.version}</version>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
     </dependencies>
 
@@ -366,18 +361,17 @@
                             <apiPackage>org.springframework.samples.petclinic.rest.api</apiPackage>
                             <generateModels>true</generateModels>
                             <modelPackage>org.springframework.samples.petclinic.rest.dto</modelPackage>
-                            <!--
-                            <generateSupportingFiles>true</generateSupportingFiles>
-                            <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
-                            -->
                             <generateApis>true</generateApis>
+                            <importMappings>
+                                <importMapping>Nullable=org.jspecify.annotations.Nullable</importMapping>
+                            </importMappings>
                             <configOptions>
                                 <!-- RestController implementation is provided by Petclinic developers -->
                                 <interfaceOnly>true</interfaceOnly>
                                 <!-- Activating Java 8 features -->
                                 <performBeanValidation>true</performBeanValidation>
-                                <dateLibrary>java8</dateLibrary>
                                 <useSpringBoot3>true</useSpringBoot3>
+                                <useJakartaEe>true</useJakartaEe>
                                 <openApiNullable>false</openApiNullable>
                                 <!-- override the default library to jersey2 -->
                                 <serializationLibrary>jackson</serializationLibrary>

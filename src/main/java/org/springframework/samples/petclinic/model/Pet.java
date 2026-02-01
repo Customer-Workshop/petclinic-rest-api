@@ -15,9 +15,6 @@
  */
 package org.springframework.samples.petclinic.model;
 
-import org.springframework.beans.support.MutableSortDefinition;
-import org.springframework.beans.support.PropertyComparator;
-
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.*;
@@ -85,7 +82,7 @@ public class Pet extends NamedEntity {
 
     public List<Visit> getVisits() {
         List<Visit> sortedVisits = new ArrayList<>(getVisitsInternal());
-        PropertyComparator.sort(sortedVisits, new MutableSortDefinition("date", false, false));
+        sortedVisits.sort(Comparator.comparing(Visit::getDate).reversed());
         return Collections.unmodifiableList(sortedVisits);
     }
 
