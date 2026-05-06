@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VetServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">vet-service</a> &gt; <a href="index.source.html" class="el_package">com.petclinic.vet.service</a> &gt; <span class="el_source">VetServiceImpl.java</span></div><h1>VetServiceImpl.java</h1><pre class="source lang-java linenums">package com.petclinic.vet.service;
+
+import com.petclinic.vet.dto.SpecialtyDto;
+import com.petclinic.vet.dto.VetDto;
+import com.petclinic.vet.dto.VetRequestDto;
+import com.petclinic.vet.entity.Specialty;
+import com.petclinic.vet.entity.Vet;
+import com.petclinic.vet.exception.ResourceNotFoundException;
+import com.petclinic.vet.mapper.VetMapper;
+import com.petclinic.vet.repository.SpecialtyRepository;
+import com.petclinic.vet.repository.VetRepository;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+public class VetServiceImpl implements VetService {
+
+    private final VetRepository vetRepository;
+    private final SpecialtyRepository specialtyRepository;
+    private final VetMapper vetMapper;
+
+    public VetServiceImpl(VetRepository vetRepository,
+                          SpecialtyRepository specialtyRepository,
+<span class="fc" id="L28">                          VetMapper vetMapper) {</span>
+<span class="fc" id="L29">        this.vetRepository = vetRepository;</span>
+<span class="fc" id="L30">        this.specialtyRepository = specialtyRepository;</span>
+<span class="fc" id="L31">        this.vetMapper = vetMapper;</span>
+<span class="fc" id="L32">    }</span>
+
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;VetDto&gt; findAll() {
+<span class="fc" id="L37">        return vetRepository.findAll().stream()</span>
+<span class="fc" id="L38">            .map(vetMapper::toDto)</span>
+<span class="fc" id="L39">            .toList();</span>
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public VetDto findById(Integer id) {
+<span class="fc" id="L45">        Vet vet = vetRepository.findById(id)</span>
+<span class="fc" id="L46">            .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Vet&quot;, id));</span>
+<span class="fc" id="L47">        return vetMapper.toDto(vet);</span>
+    }
+
+    @Override
+    public VetDto create(VetRequestDto request) {
+<span class="fc" id="L52">        Vet vet = vetMapper.toEntity(request);</span>
+<span class="fc" id="L53">        Set&lt;Specialty&gt; specialties = resolveSpecialties(request.specialties());</span>
+<span class="fc" id="L54">        vet.setSpecialties(specialties);</span>
+<span class="fc" id="L55">        Vet saved = vetRepository.save(vet);</span>
+<span class="fc" id="L56">        return vetMapper.toDto(saved);</span>
+    }
+
+    @Override
+    public VetDto update(Integer id, VetRequestDto request) {
+<span class="fc" id="L61">        Vet vet = vetRepository.findById(id)</span>
+<span class="fc" id="L62">            .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Vet&quot;, id));</span>
+<span class="fc" id="L63">        vetMapper.updateEntity(request, vet);</span>
+<span class="fc" id="L64">        Set&lt;Specialty&gt; specialties = resolveSpecialties(request.specialties());</span>
+<span class="fc" id="L65">        vet.setSpecialties(specialties);</span>
+<span class="fc" id="L66">        Vet saved = vetRepository.save(vet);</span>
+<span class="fc" id="L67">        return vetMapper.toDto(saved);</span>
+    }
+
+    @Override
+    public void delete(Integer id) {
+<span class="fc" id="L72">        Vet vet = vetRepository.findById(id)</span>
+<span class="fc" id="L73">            .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Vet&quot;, id));</span>
+<span class="fc" id="L74">        vetRepository.delete(vet);</span>
+<span class="fc" id="L75">    }</span>
+
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;VetDto&gt; findBySpecialtyId(Integer specialtyId) {
+<span class="fc" id="L80">        return vetRepository.findBySpecialtyId(specialtyId).stream()</span>
+<span class="fc" id="L81">            .map(vetMapper::toDto)</span>
+<span class="fc" id="L82">            .toList();</span>
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;VetDto&gt; searchByName(String name) {
+<span class="fc" id="L88">        return vetRepository.searchByName(name).stream()</span>
+<span class="fc" id="L89">            .map(vetMapper::toDto)</span>
+<span class="fc" id="L90">            .toList();</span>
+    }
+
+    private Set&lt;Specialty&gt; resolveSpecialties(List&lt;SpecialtyDto&gt; specialtyDtos) {
+<span class="fc" id="L94">        Set&lt;Specialty&gt; specialties = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        if (specialtyDtos == null) {</span>
+<span class="fc" id="L96">            return specialties;</span>
+        }
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        for (SpecialtyDto dto : specialtyDtos) {</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">            if (dto.id() != null) {</span>
+<span class="fc" id="L100">                Specialty specialty = specialtyRepository.findById(dto.id())</span>
+<span class="fc" id="L101">                    .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Specialty&quot;, dto.id()));</span>
+<span class="fc" id="L102">                specialties.add(specialty);</span>
+            }
+<span class="fc" id="L104">        }</span>
+<span class="fc" id="L105">        return specialties;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
