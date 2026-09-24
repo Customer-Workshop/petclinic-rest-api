@@ -19,7 +19,7 @@ package org.springframework.samples.petclinic.rest.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

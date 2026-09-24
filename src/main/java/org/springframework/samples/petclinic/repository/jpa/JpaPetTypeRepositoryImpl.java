@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataAccessException;
@@ -67,10 +67,9 @@ public class JpaPetTypeRepositoryImpl implements PetTypeRepository {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void delete(PetType petType) throws DataAccessException {
-		this.em.remove(this.em.contains(petType) ? petType : this.em.merge(petType));
 		Integer petTypeId = petType.getId();
 		
-		List<Pet> pets = this.em.createQuery("SELECT pet FROM Pet pet WHERE type_id=" + petTypeId).getResultList();
+		List<Pet> pets = this.em.createQuery("SELECT pet FROM Pet pet WHERE pet.type.id = :petTypeId").setParameter("petTypeId", petTypeId).getResultList();
 		for (Pet pet : pets){
 			List<Visit> visits = pet.getVisits();
 			for (Visit visit : visits){
@@ -78,7 +77,7 @@ public class JpaPetTypeRepositoryImpl implements PetTypeRepository {
 			}
 			this.em.createQuery("DELETE FROM Pet pet WHERE id=" + pet.getId()).executeUpdate();
 		}
-		this.em.createQuery("DELETE FROM PetType pettype WHERE id=" + petTypeId).executeUpdate();
+		this.em.remove(this.em.contains(petType) ? petType : this.em.merge(petType));
 	}
 
 }

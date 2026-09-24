@@ -117,7 +117,7 @@ class VetRestControllerTests {
     @WithMockUser(roles="VET_ADMIN")
     void testGetAllVetsSuccess() throws Exception {
     	given(this.clinicService.findAllVets()).willReturn(vets);
-        this.mockMvc.perform(get("/api/vets/")
+        this.mockMvc.perform(get("/api/vets")
         	.accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
@@ -132,7 +132,7 @@ class VetRestControllerTests {
     void testGetAllVetsNotFound() throws Exception {
     	vets.clear();
     	given(this.clinicService.findAllVets()).willReturn(vets);
-        this.mockMvc.perform(get("/api/vets/")
+        this.mockMvc.perform(get("/api/vets")
         	.accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
@@ -144,7 +144,7 @@ class VetRestControllerTests {
     	newVet.setId(999);
     	ObjectMapper mapper = new ObjectMapper();
         String newVetAsJSON = mapper.writeValueAsString(vetMapper.toVetDto(newVet));
-    	this.mockMvc.perform(post("/api/vets/")
+    	this.mockMvc.perform(post("/api/vets")
     		.content(newVetAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
     		.andExpect(status().isCreated());
     }
@@ -157,7 +157,7 @@ class VetRestControllerTests {
     	newVet.setFirstName(null);
     	ObjectMapper mapper = new ObjectMapper();
         String newVetAsJSON = mapper.writeValueAsString(vetMapper.toVetDto(newVet));
-    	this.mockMvc.perform(post("/api/vets/")
+    	this.mockMvc.perform(post("/api/vets")
         		.content(newVetAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
         		.andExpect(status().isBadRequest());
      }

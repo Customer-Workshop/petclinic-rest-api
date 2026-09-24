@@ -131,7 +131,7 @@ class PetRestControllerTests {
         System.err.println(pets);
         when(this.clinicService.findAllPets()).thenReturn(pets);
         //given(this.clinicService.findAllPets()).willReturn(petMapper.toPets(pets));
-        this.mockMvc.perform(get("/api/pets/")
+        this.mockMvc.perform(get("/api/pets")
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
@@ -146,7 +146,7 @@ class PetRestControllerTests {
     void testGetAllPetsNotFound() throws Exception {
         pets.clear();
         given(this.clinicService.findAllPets()).willReturn(petMapper.toPets(pets));
-        this.mockMvc.perform(get("/api/pets/")
+        this.mockMvc.perform(get("/api/pets")
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
